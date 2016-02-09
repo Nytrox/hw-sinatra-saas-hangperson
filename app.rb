@@ -40,7 +40,9 @@ class HangpersonApp < Sinatra::Base
   post '/guess' do
     letter = params[:guess].to_s[0]
     letter.downcase!
-    if @game.guesses[letter] or @game.wrong_guesses[letter]
+    if !letter
+      flash[:message] = "Invalid guess."
+    elsif @game.guesses[letter] or @game.wrong_guesses[letter]
       flash[:message] = "You have already used that letter."
     end
     begin
@@ -60,9 +62,9 @@ class HangpersonApp < Sinatra::Base
     state = @game.check_win_or_lose
     case state
       when :win
-        erb :win
+        redirect '/win'
       when :lose
-        erb :lose
+        redirect '/lose'
       when :play
         erb :show
       else
@@ -70,14 +72,32 @@ class HangpersonApp < Sinatra::Base
     end
   end
   
-  # get '/win' do
-  #   ### YOUR CODE HERE ###
-  #   erb :win # You may change/remove this line
-  # end
+  get '/win' do
+    state = @game.check_win_or_lose
+    case state
+      when :win
+        erb :win
+      when :lose
+        redirect '/lose'
+      when :play
+        redirect '/show'
+      else
+        puts "Error"
+    end
+  end
   
-  # get '/lose' do
-  #   ### YOUR CODE HERE ###
-  #   erb :lose # You may change/remove this line
-  # end
+  get '/lose' do
+    state = @game.check_win_or_lose
+    case state
+      when :win
+        redirect '/win'
+      when :lose
+        erb :lose
+      when :play
+        redirect '/show'
+      else
+        puts "Error"
+    end
+  end
   
 end
