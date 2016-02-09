@@ -40,7 +40,7 @@ class HangpersonApp < Sinatra::Base
   post '/guess' do
     letter = params[:guess].to_s[0]
     letter.downcase!
-    if !letter
+    if letter == ''
       flash[:message] = "Invalid guess."
     elsif @game.guesses[letter] or @game.wrong_guesses[letter]
       flash[:message] = "You have already used that letter."
